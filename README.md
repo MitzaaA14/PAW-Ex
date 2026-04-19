@@ -1,44 +1,25 @@
-# [Demo YouTube](https://youtu.be/K27lxMWs4IY)
+Link YouTube : https://youtu.be/JXMdfcS86do
 
+1. Logout (POST vs GET)
 
-# Intrebari ASP.NET Core Identity
+Implementarea logout-ului ca formular de tip POST este o măsură de securitate esențială pentru a preveni deconectarea accidentală a utilizatorului prin mecanismele de prefetching ale browserelor. Dacă logout-ul ar fi un simplu link GET, site-ul ar deveni vulnerabil la atacuri de tip CSRF, unde un site ar putea forța închiderea sesiunii tale fără acordul tău.
 
-## 1. De ce Logout e form POST si nu link GET?
+2. Procesul de Login în doi pași
 
-Daca era GET, oricine putea sa te delogheze trimitandu-ti un link sau chiar un `<img src="/logout">` intr-o pagina random. Cu POST esti obligat sa faci o actiune intentionata, plus poti pune token CSRF. E o chestie de securitate de baza.
+Logarea necesită doi pași deoarece ASP.NET Core Identity utilizează UserName ca identificator principal, în timp ce utilizatorii preferă să folosească adresa de Email. Astfel, la primul pas identificăm utilizatorul după email pentru a-i obține numele de utilizator, iar la al doilea pas verificăm parola, păstrând diferența dintre email (adresă de contact) și username (identificator unic în sistem).
 
----
+3. Vizibilitatea în View vs Autorizarea în Controller
 
-## 2. De ce login-ul face doi pasi?
+Ascunderea butoanelor în View are rolul de a îmbunătăți experiența utilizatorului prin eliminarea elementelor vizuale inutile, însă securitatea reală este oferită doar de atributele [Authorize] din Controller. Dacă am omite verificarea din Controller, orice utilizator care cunoaște adresa URL a unei acțiuni ar putea să o execute manual, ignorând faptul că butonul nu este vizibil pe pagină.
 
-Identity tine cont de faptul ca `UserName` si `Email` sunt lucruri diferite intern. Cauti userul dupa email, apoi te loghezi cu username-ul lui. Nu exista un singur apel cu email + parola pentru ca Identity nu gandeste asa — emailul e doar un camp de search, identificatorul real e username-ul.
+4. Middleware și ordinea Authentication/Authorization
 
----
+Middleware-ul reprezintă un ansamblu de componente software dispuse într-o conductă (pipeline) care procesează pe rând fiecare cerere HTTP ce ajunge la server. UseAuthentication trebuie să fie apelat înaintea lui UseAuthorization deoarece aplicația trebuie mai întâi să identifice identitatea utilizatorului înainte de a putea decide ce drepturi de acces are acesta asupra resurselor.
 
-## 3. De ce nu ajunge sa ascunzi butoanele in View?
+5. Implementarea manuală a securității
 
-Pentru ca ascunderea in View e doar cosmetica, nu securitate. Oricine poate da un request direct la `/Edit/5` din Postman sau browser fara sa vada vreo interfata. Fara `[Authorize]` in controller, serverul executa oricum.
+Dacă nu am utiliza ASP.NET Core Identity, ar trebui să programăm de la zero mecanisme complexe pentru criptarea și verificarea parolelor prin algoritmi de hashing, gestionarea securizată a cookie-urilor de sesiune și logica pentru blocarea conturilor în cazul atacurilor de tip brute force. De asemenea, am fi fost responsabili pentru crearea întregului sistem de resetare a parolelor și de confirmare a conturilor prin email.
 
-Invers, daca ai `[Authorize]` dar nu ascunzi in View, butoanele apar, userul apasa si primeste 403. Merge, dar arata urat si confuzeaza lumea.
+6. Dezavantajele utilizării Identity
 
----
-
-## 4. Ce e middleware pipeline-ul?
-
-E lantul de componente prin care trece fiecare request. Ordinea conteaza enorm. `UseAuthentication()` trebuie sa fie primul pentru ca trebuie sa stii *cine esti* inainte sa verifici *ce ai voie sa faci*. Daca le inversezi, authorization ruleaza fara nicio identitate setata si toata lumea pare neautentificata.
-
----
-
-## 5. Ce am fi facut fara Identity?
-
-Practic totul de la zero: hashing parole, stocare useri, sesiuni, cookie-uri, protectie CSRF, lockout dupa incercari gresite, reset parola, roluri, validare email. Saptamani de implementat si multe sanse sa gresesti ceva si sa ai o vulnerabilitate.
-
----
-
-## 6. Dezavantaje Identity?
-
-- E lipit de Entity Framework, nu prea scapi de el
-- Migrezi greu schema aia de useri in alt sistem
-- E facut pe cookie-uri, deci pentru API / Angular / mobile trebuie configuratie extra pentru JWT
-- Aduce mult overhead chiar daca nu ai nevoie de toate feature-urile
-- Daca vrei ceva mai custom, te bati cu el
+Un dezavantaj major al Identity este rigiditatea schemei bazei de date, care te forțează să folosești o structură de tabele predefinită și este strâns legată de tehnologia Entity Framework. Totodată, sistemul este optimizat nativ pentru aplicații web bazate pe cookie-uri, ceea ce face configurarea lui pentru aplicații mobile sau frontend-uri moderne (care utilizează token-uri JWT) să fie mult mai dificilă.
