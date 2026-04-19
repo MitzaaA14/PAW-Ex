@@ -2,7 +2,7 @@ Link YouTube : https://youtu.be/JXMdfcS86do
 
 1. Logout (POST vs GET)
 
-Implementarea logout-ului ca formular de tip POST este o măsură de securitate esențială pentru a preveni deconectarea accidentală a utilizatorului prin mecanismele de prefetching ale browserelor. Dacă logout-ul ar fi un simplu link GET, site-ul ar deveni vulnerabil la atacuri de tip CSRF, unde un site ar putea forța închiderea sesiunii tale fără acordul tău.
+Implementarea logout-ului de tip POST este o măsură de securitate esențială pentru a preveni deconectarea accidentală a utilizatorului prin mecanismele de prefetching ale browserelor. Dacă logout-ul ar fi un simplu link GET, site-ul ar deveni vulnerabil la atacuri de tip CSRF, unde un site ar putea forța închiderea sesiunii tale fără acordul tău.
 
 2. Procesul de Login în doi pași
 
@@ -14,7 +14,7 @@ Ascunderea butoanelor în View are rolul de a îmbunătăți experiența utiliza
 
 4. Middleware și ordinea Authentication/Authorization
 
-Middleware-ul reprezintă un ansamblu de componente software dispuse într-o conductă (pipeline) care procesează pe rând fiecare cerere HTTP ce ajunge la server. UseAuthentication trebuie să fie apelat înaintea lui UseAuthorization deoarece aplicația trebuie mai întâi să identifice identitatea utilizatorului înainte de a putea decide ce drepturi de acces are acesta asupra resurselor.
+Middleware-ul reprezintă un ansamblu de componente software dispuse într-un pipeline care procesează pe rând fiecare cerere HTTP ce ajunge la server. UseAuthentication trebuie să fie apelat înaintea lui UseAuthorization deoarece aplicația trebuie mai întâi să identifice identitatea utilizatorului înainte de a putea decide ce drepturi de acces are acesta asupra resurselor.
 
 5. Implementarea manuală a securității
 
@@ -22,4 +22,4 @@ Dacă nu am utiliza ASP.NET Core Identity, ar trebui să programăm de la zero m
 
 6. Dezavantajele utilizării Identity
 
-Un dezavantaj major al Identity este rigiditatea schemei bazei de date, care te forțează să folosești o structură de tabele predefinită și este strâns legată de tehnologia Entity Framework. Totodată, sistemul este optimizat nativ pentru aplicații web bazate pe cookie-uri, ceea ce face configurarea lui pentru aplicații mobile sau frontend-uri moderne (care utilizează token-uri JWT) să fie mult mai dificilă.
+Un dezavantaj major al Identity este rigiditatea schemei bazei de date, care te forțează să folosești o structură de tabele predefinită și este strâns legată de tehnologia Entity Framework. Totodată, sistemul este optimizat nativ pentru aplicații web bazate pe cookie-uri, ceea ce face configurarea lui pentru aplicații mobile sau frontend-uri moderne să fie mult mai dificilă.
