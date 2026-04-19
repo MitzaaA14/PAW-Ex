@@ -1,0 +1,8 @@
+wwwroot\css\site.css
+wwwroot\images\Ah_The_Negotiator_Banner.jpg
+wwwroot\images\alimentare_pompa_benzina.jpg
+wwwroot\images\chuck-norris-in-the-expendables-2.png
+wwwroot\images\clasamentul_reciclarii.png
+wwwroot\images\poza.webp
+wwwroot\images\trump.png
+wwwroot\js\site.js
