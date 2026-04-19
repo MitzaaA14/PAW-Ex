@@ -2,11 +2,11 @@ Link YouTube : https://youtu.be/JXMdfcS86do
 
 1. Logout (POST vs GET)
 
-Implementarea logout-ului de tip POST este o măsură de securitate esențială pentru a preveni deconectarea accidentală a utilizatorului prin mecanismele de prefetching ale browserelor. Dacă logout-ul ar fi un simplu link GET, site-ul ar deveni vulnerabil la atacuri de tip CSRF, unde un site ar putea forța închiderea sesiunii tale fără acordul tău.
+Implementarea POST împiedică delogarea accidentală, dar și protejează utilizatorul de atacurile de tip CSRF - adică vom evita eventualele momente în care un site forțează delogarea fără ca tu să vrei. Folosind POST suntem sigur că acțiunea este una reală venită de la utilizator.
 
 2. Procesul de Login în doi pași
 
-Logarea necesită doi pași deoarece ASP.NET Core Identity utilizează UserName ca identificator principal, în timp ce utilizatorii preferă să folosească adresa de Email. Astfel, la primul pas identificăm utilizatorul după email pentru a-i obține numele de utilizator, iar la al doilea pas verificăm parola, păstrând diferența dintre email (adresă de contact) și username (identificator unic în sistem).
+ASP.NET Identity lucrează intern cu UserName, iar noi preferăm să ne logăm cu emailul. Astfel la primul pas se face traducerea emailului în username-ul corespunzător din baza de date, iar la al doilea pas facem locarea cu acel username și parola.
 
 3. Vizibilitatea în View vs Autorizarea în Controller
 
@@ -14,12 +14,14 @@ Ascunderea butoanelor în View are rolul de a îmbunătăți experiența utiliza
 
 4. Middleware și ordinea Authentication/Authorization
 
-Middleware-ul reprezintă un ansamblu de componente software dispuse într-un pipeline care procesează pe rând fiecare cerere HTTP ce ajunge la server. UseAuthentication trebuie să fie apelat înaintea lui UseAuthorization deoarece aplicația trebuie mai întâi să identifice identitatea utilizatorului înainte de a putea decide ce drepturi de acces are acesta asupra resurselor.
+Middleware-ul reprezintă un ansamblu de componente software dispuse într-un pipeline care procesează pe rând fiecare cerere HTTP ce ajunge la server. Ordinea de apelare ar fi UseAuthentication() ca să aflăm cine ești, iar apoi ar fi UseAuthorization() ca să vedem dacă ai voie să faci ceva. Dacă ar fi puse invers, aplicația ar încerca să verifice drepturile înainte să verifice identitatea.
 
 5. Implementarea manuală a securității
 
-Dacă nu am utiliza ASP.NET Core Identity, ar trebui să programăm de la zero mecanisme complexe pentru criptarea și verificarea parolelor prin algoritmi de hashing, gestionarea securizată a cookie-urilor de sesiune și logica pentru blocarea conturilor în cazul atacurilor de tip brute force. De asemenea, am fi fost responsabili pentru crearea întregului sistem de resetare a parolelor și de confirmare a conturilor prin email.
+Dacă nu am utiliza Identity, ar trebui să programăm de la zero pentru tot ce ține de verificarea parolelor prin algoritmi de hashing, gestionarea cookie-urilor de sesiune și logica pentru blocarea conturilor în cazul atacurilor. De asemenea, am fi fost responsabili pentru crearea întregului sistem de resetare a parolelor și de confirmare a conturilor prin email.
 
 6. Dezavantajele utilizării Identity
 
-Un dezavantaj major al Identity este rigiditatea schemei bazei de date, care te forțează să folosești o structură de tabele predefinită și este strâns legată de tehnologia Entity Framework. Totodată, sistemul este optimizat nativ pentru aplicații web bazate pe cookie-uri, ceea ce face configurarea lui pentru aplicații mobile sau frontend-uri moderne să fie mult mai dificilă.
+Rigiditate și tabele : Te obligă să folosești Entity Framework și îți umple baza de date cu tabele predefinite (AspNet) care sunt greu de personalizat sau de mutat pe alte tehnologii.
+
+Probleme de compatibilitate: E construit pentru cookie-uri și pagini web clasice, fiind complicat de adaptat pentru aplicații moderne (mobile sau SPA) care folosesc token-uri JWT.
